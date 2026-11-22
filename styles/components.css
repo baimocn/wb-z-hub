@@ -112,3 +112,22 @@ pre.raw{background:var(--card-bg);border:1px solid var(--card-border);border-rad
   word-break:break-all;color:var(--ink-3);max-height:460px;overflow:auto}
 a.ext{color:var(--info)}
 a.ext:hover{text-decoration:underline}
+
+/* ─── wb-logs 日志页：实时日志面板（自 wb-logs.js 的 <style> 注入迁入，只用令牌） ─── */
+.toolbar .spacer{flex:1}
+.logpanel{border:1px solid var(--card-border);border-radius:var(--card-radius);background:var(--card-bg);overflow:hidden;margin-bottom:var(--sp-4)}
+.logbody{height:420px;overflow:auto;background:var(--bg);font-family:var(--font-mono);font-size:11.5px;line-height:1.6;padding:var(--sp-2) 0}
+.logline{display:flex;gap:var(--sp-2);padding:0 var(--sp-3)}
+.logline:hover{background:var(--surface-2)}
+.logline .t{color:var(--ink-4);flex:none}
+.logline .lv{flex:none;min-width:46px;height:16px;line-height:16px;margin-top:1px;text-align:center;border-radius:var(--radius-s);font-size:10px}
+.logline .lv.INFO{color:var(--info);background:var(--info-soft)}
+.logline .lv.WARN{color:var(--accent);background:var(--accent-soft)}
+.logline .lv.ERROR{color:var(--danger);background:var(--danger-soft)}
+.logline .lv.DEBUG{color:var(--violet);background:var(--surface-2)}
+.logline .tag{color:var(--ink-4);flex:none;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logline .m{color:var(--ink-2);min-width:0;white-space:pre-wrap;word-break:break-all}
+.logempty{color:var(--ink-4);text-align:center;padding:var(--sp-6)}
+.logfoot{display:flex;gap:var(--sp-4);align-items:center;flex-wrap:wrap;padding:6px var(--sp-3);border-top:1px solid var(--line);background:var(--surface);color:var(--ink-4);font-size:11px;font-family:var(--font-mono)}
+.logfoot b{color:var(--ink-2);font-weight:500}
+.logfoot .err{color:var(--danger);margin-left:auto}
