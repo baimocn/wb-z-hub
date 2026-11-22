@@ -25,7 +25,7 @@ HUB.shell = function(el, ctx){
     /** 设置页面标题和副标题 */
     setTitle(title, sub){
       if(!this.alive) return;
-      el.innerHTML = `<h1>${esc(title)}</h1><p class="sub">${esc(sub||'')}</p>`
+      el.innerHTML = `<h1>${HUB.ui.esc(title)}</h1><p class="sub">${HUB.ui.esc(sub||'')}</p>`
         + `<div class="hub-toolbar"></div><div class="hub-content"></div>`;
     },
 
