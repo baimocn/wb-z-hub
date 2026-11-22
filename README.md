@@ -1,4 +1,4 @@
-# Z·HUB
+# WB-Z-HUB
 
 本地 AI 网关控制台。管你手里所有 Z.ai / WorkBuddy 的号，一个页面看完。
 

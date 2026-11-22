@@ -1,4 +1,4 @@
-# 后端 HTTP 端点清单（Z·HUB 前端对接用）
+# 后端 HTTP 端点清单（WB-Z-HUB 前端对接用）
 
 > 生成方式：逐行通读下列两个后端源文件后手工整理，未抽样。
 > - **wb 侧**：`D:/Desktop/workbuddy2api-hub-main/workbuddy2api-hub-main/wb_proxy.py`（29079 行）
