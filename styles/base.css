@@ -1,17 +1,28 @@
 /* 基础：reset / 排版 / 布局骨架（消费语义令牌） */
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:13px;display:flex;flex-direction:column;overflow:hidden}
+body{
+  background:
+    radial-gradient(1200px 300px at 50% -80px, rgba(232,163,61,.05), transparent 60%),
+    linear-gradient(180deg, var(--raw-gray-0), var(--bg) 320px);
+  color:var(--ink);font-family:var(--font-ui);font-size:var(--fs-m);
+  display:flex;flex-direction:column;overflow:hidden;
+  font-feature-settings:"tnum" 1;
+}
+::selection{background:rgba(232,163,61,.28)}
 a{color:var(--info);text-decoration:none}
 a:hover{text-decoration:underline}
-h1{font-size:17px;margin:0 0 var(--sp-1);font-weight:600}
-h2{font-size:14px;margin:var(--sp-5) 0 var(--sp-2);font-weight:600}
-.sub{color:var(--ink-3);font-size:12px;margin:0 0 var(--sp-4)}
+h1{font-size:var(--fs-xl);margin:0 0 var(--sp-1);font-weight:650;letter-spacing:-.01em}
+h2{font-size:var(--fs-l);margin:var(--sp-5) 0 var(--sp-2);font-weight:600}
+.sub{color:var(--ink-3);font-size:var(--fs-s);margin:0 0 var(--sp-4)}
 .mono{font-family:var(--font-mono)}
 .dim{color:var(--ink-3)}
-#main{flex:1;overflow:auto;padding:var(--sp-4) var(--sp-5) var(--sp-6)}
-.load{color:var(--ink-3);font-size:12px;padding:var(--sp-2) 0}
+.kick{font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);font-weight:600}
+.num-r{text-align:right;font-family:var(--font-mono)}
+#main{flex:1;overflow:auto;padding:var(--sp-4) var(--sp-5) var(--sp-6);animation:page-in var(--t-med) both}
+@keyframes page-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 :focus-visible{outline:none;box-shadow:var(--focus-ring)}
 ::-webkit-scrollbar{width:var(--scrollbar-size);height:var(--scrollbar-size)}
-::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--line-strong);background-clip:content-box}
 ::-webkit-scrollbar-track{background:transparent}

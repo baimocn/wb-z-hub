@@ -9,7 +9,7 @@
   --raw-gray-0:#0b0d10; --raw-gray-1:#0f1115; --raw-gray-2:#14171c;
   --raw-gray-3:#1a1e25; --raw-gray-4:#20242e; --raw-gray-5:#262a33;
   --raw-gray-6:#3a3f4b; --raw-gray-7:#565d6b;
-  --raw-ink-1:#e8e6e0; --raw-ink-2:#b7bcc7; --raw-ink-3:#9aa0ad; --raw-ink-4:#6d7280;
+  --raw-ink-1:#ece9e2; --raw-ink-2:#b7bcc7; --raw-ink-3:#9aa0ad; --raw-ink-4:#6d7280;
   --raw-amber:#e8a33d; --raw-blue:#6da8e8; --raw-mint:#5ec97a; --raw-red:#e86a5c;
   --raw-violet:#a78bfa;
   /* 原始字体 */
@@ -20,6 +20,12 @@
   --raw-space-4:16px; --raw-space-5:24px; --raw-space-6:32px;
   /* 原始圆角 */
   --raw-radius-s:6px; --raw-radius-m:10px; --raw-radius-l:14px;
+  /* 原始字号（模块化比例） */
+  --raw-fs-11:11px; --raw-fs-12:12px; --raw-fs-13:13px;
+  --raw-fs-15:15px; --raw-fs-18:18px; --raw-fs-22:22px;
+  /* 原始阴影 */
+  --raw-shadow-1:0 1px 2px rgba(0,0,0,.35);
+  --raw-shadow-2:0 8px 24px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.25);
 }
 
 /* 2. 语义令牌（semantic）——按用途命名 */
@@ -37,21 +43,31 @@
   --violet:var(--raw-violet);
   /* 字体 */
   --font-ui:var(--raw-font-ui); --font-mono:var(--raw-font-mono);
+  /* 字号 */
+  --fs-xs:var(--raw-fs-11); --fs-s:var(--raw-fs-12); --fs-m:var(--raw-fs-13);
+  --fs-l:var(--raw-fs-15); --fs-xl:var(--raw-fs-18); --fs-num:var(--raw-fs-22);
   /* 间距 */
   --sp-1:var(--raw-space-1); --sp-2:var(--raw-space-2); --sp-3:var(--raw-space-3);
   --sp-4:var(--raw-space-4); --sp-5:var(--raw-space-5); --sp-6:var(--raw-space-6);
   /* 圆角 */
   --radius-s:var(--raw-radius-s); --radius-m:var(--raw-radius-m); --radius-l:var(--raw-radius-l);
+  /* 阴影 / 高度 */
+  --shadow-1:var(--raw-shadow-1); --shadow-2:var(--raw-shadow-2);
   /* 域色（WB=琥珀 ZC=蓝） */
   --domain-wb:var(--raw-amber); --domain-zc:var(--raw-blue);
+  /* 动效 */
+  --t-fast:120ms cubic-bezier(.4,0,.2,1);
+  --t-med:200ms cubic-bezier(.4,0,.2,1);
 }
 
 /* 3. 组件令牌（component）——组件直接消费 */
 :root{
-  --topbar-h:46px;
-  --card-bg:var(--surface); --card-border:var(--line); --card-radius:var(--radius-l);
+  --topbar-h:48px;
+  --card-bg:linear-gradient(180deg, var(--raw-gray-3), var(--raw-gray-2));
+  --card-border:var(--line); --card-radius:var(--radius-l);
   --table-head-bg:var(--surface-2);
   --btn-bg:var(--surface-2); --btn-border:var(--line); --btn-radius:var(--radius-m);
+  --btn-pri-text:var(--raw-gray-2); --btn-pri-hover:var(--raw-amber);
   --pill-radius:999px;
   --toast-border:var(--accent);
   --toast-max-w:440px;
