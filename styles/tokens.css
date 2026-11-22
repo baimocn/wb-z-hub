@@ -1,0 +1,60 @@
+/* ─────────────────────────────────────────────────────────────
+ * Z·HUB 设计令牌（三层架构：原始 → 语义 → 组件）
+ * 参考 ckm-design-system 三层令牌架构 + Vercel/Linear 暗色控制台观感
+ * ───────────────────────────────────────────────────────────── */
+
+/* 1. 原始令牌（raw）——只定义一次，语义层引用 */
+:root{
+  /* 原始色板 */
+  --raw-gray-0:#0b0d10; --raw-gray-1:#0f1115; --raw-gray-2:#14171c;
+  --raw-gray-3:#1a1e25; --raw-gray-4:#20242e; --raw-gray-5:#262a33;
+  --raw-gray-6:#3a3f4b; --raw-gray-7:#565d6b;
+  --raw-ink-1:#e8e6e0; --raw-ink-2:#b7bcc7; --raw-ink-3:#9aa0ad; --raw-ink-4:#6d7280;
+  --raw-amber:#e8a33d; --raw-blue:#6da8e8; --raw-mint:#5ec97a; --raw-red:#e86a5c;
+  --raw-violet:#a78bfa;
+  /* 原始字体 */
+  --raw-font-ui:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --raw-font-mono:"Cascadia Code",Consolas,ui-monospace,monospace;
+  /* 原始间距（4pt 栅格） */
+  --raw-space-1:4px; --raw-space-2:8px; --raw-space-3:12px;
+  --raw-space-4:16px; --raw-space-5:24px; --raw-space-6:32px;
+  /* 原始圆角 */
+  --raw-radius-s:6px; --raw-radius-m:10px; --raw-radius-l:14px;
+}
+
+/* 2. 语义令牌（semantic）——按用途命名 */
+:root{
+  /* 表面 */
+  --bg:var(--raw-gray-1); --surface:var(--raw-gray-2); --surface-2:var(--raw-gray-3);
+  --surface-3:var(--raw-gray-4); --line:var(--raw-gray-5); --line-strong:var(--raw-gray-6);
+  /* 文本 */
+  --ink:var(--raw-ink-1); --ink-2:var(--raw-ink-2); --ink-3:var(--raw-ink-3); --ink-4:var(--raw-ink-4);
+  /* 品牌 */
+  --accent:var(--raw-amber); --accent-soft:rgba(232,163,61,.13);
+  --info:var(--raw-blue); --info-soft:rgba(109,168,232,.13);
+  --ok:var(--raw-mint); --ok-soft:rgba(94,201,122,.14);
+  --danger:var(--raw-red); --danger-soft:rgba(232,106,92,.14);
+  --violet:var(--raw-violet);
+  /* 字体 */
+  --font-ui:var(--raw-font-ui); --font-mono:var(--raw-font-mono);
+  /* 间距 */
+  --sp-1:var(--raw-space-1); --sp-2:var(--raw-space-2); --sp-3:var(--raw-space-3);
+  --sp-4:var(--raw-space-4); --sp-5:var(--raw-space-5); --sp-6:var(--raw-space-6);
+  /* 圆角 */
+  --radius-s:var(--raw-radius-s); --radius-m:var(--raw-radius-m); --radius-l:var(--raw-radius-l);
+  /* 域色（WB=琥珀 ZC=蓝） */
+  --domain-wb:var(--raw-amber); --domain-zc:var(--raw-blue);
+}
+
+/* 3. 组件令牌（component）——组件直接消费 */
+:root{
+  --topbar-h:46px;
+  --card-bg:var(--surface); --card-border:var(--line); --card-radius:var(--radius-l);
+  --table-head-bg:var(--surface-2);
+  --btn-bg:var(--surface-2); --btn-border:var(--line); --btn-radius:var(--radius-m);
+  --pill-radius:999px;
+  --toast-border:var(--accent);
+  --toast-max-w:440px;
+  --scrollbar-size:10px;
+  --focus-ring:0 0 0 2px var(--accent-soft), 0 0 0 1px var(--accent);
+}
