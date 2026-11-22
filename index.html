@@ -15,12 +15,12 @@
 </header>
 <main id="main"><div class="load">加载中…</div></main>
 <div class="toast" id="toast"></div>
-<!-- 核心层：API 单一事实源 / UI 工具 / 路由注册表 -->
+<!-- 核心层：API 单一事实源 / UI 工具 / 路由注册表 / 共享组件 -->
 <script src="js/core/api.js"></script>
 <script src="js/core/ui.js"></script>
 <script src="js/core/router.js"></script>
-<!-- 页面模块（自注册 HUB.register，新增页面即新增文件 + 一行 script） -->
-<!-- 页面模块（自注册 HUB.register，新增页面即新增文件 + 一行 script） -->
+<script src="js/core/components.js"></script>
+<!-- 页面模块（自注册 HUB.register，新增页面=新增文件+一行 script） -->
 <script src="js/pages/overview.js"></script>
 <script src="js/pages/wb-accounts.js"></script>
 <script src="js/pages/wb-usage.js"></script>
