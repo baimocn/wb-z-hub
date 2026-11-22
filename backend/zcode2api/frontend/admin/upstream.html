@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>zcode-hub · 上游分析</title>
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body>
+<div id="admin-header"></div>
+
+<main class="admin-main">
+  <div class="page-hd">
+    <div>
+      <div class="page-title">上游分析</div>
+      <div class="page-sub">两个上游的版本对齐状态、官方包指纹探针与更新建议</div>
+    </div>
+    <div class="page-actions">
+      <button class="page-action-btn" onclick="loadAlign()">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 6.7"/><path d="M20 5v6h-6"/></svg>
+        重新对齐
+      </button>
+    </div>
+  </div>
+
+  <div class="section-head"><div class="section-title">版本对齐</div><span class="section-meta" id="align-ts"></span></div>
+  <div class="stat-grid" id="align-grid"><div class="stat-cell"><div class="stat-label">加载中…</div></div></div>
+
+  <div class="settings-card" style="max-width:none">
+    <div class="section-title">动作建议</div>
+    <div id="actions" style="margin-top:10px"></div>
+  </div>
+
+  <div class="section-head"><div class="section-title">官方包探针（ZCode）</div><span class="section-meta">HTTP Range 只解 glm/zcode.cjs，不整包下载</span></div>
+  <div class="settings-card" style="max-width:none">
+    <div class="settings-row">
+      <label>目标版本</label>
+      <div class="hint">留空 = 官方 manifest 最新版。探针提取包内 APP_VERSION，并把本地提示词各段的中段指纹拿到官方正文里比对：命中 = 该段未变，缺失 = 正文已变需人工移植。</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input class="input" id="pkg-version" placeholder="如 3.18.2（留空 = 最新）" style="max-width:240px">
+        <button class="btn btn-primary" id="pkg-run" onclick="runProbe()">分析官方包</button>
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-dim)">
+          <input type="checkbox" id="pkg-refresh" class="cb"> 强制重新下载
+        </label>
+      </div>
+      <div class="hint" id="pkg-status"></div>
+    </div>
+    <div id="pkg-result" style="margin-top:6px"></div>
+  </div>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/header.js"></script>
+<script>
+(async()=>{
+  await renderAdminHeader();
+  const key=await adminKey.get();
+  loadAlign();
+})();
+
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+async function loadAlign(){
+  try{
+    const d=await api('GET','/upstream-analysis');
+    const data=d.data||{};
+    const z=data.upstreams&&data.upstreams.zcode||{}, w=data.upstreams&&data.upstreams.workbuddy||{};
+    document.getElementById('align-ts').textContent='生成于 '+new Date((data.generated_at||0)*1000).toLocaleString();
+    const probed=w.probed||{};
+    const cells=[
+      ['ZCode 官方', z.latest||'—'],
+      ['ZCode 正文锁', z.prompt_aligned||'—'],
+      ['WB 国际版', probed.desktop_intl||'—'],
+      ['WB 国内版', probed.desktop_cn||'—'],
+      ['WB CLI', probed.cli||'—'],
+    ];
+    document.getElementById('align-grid').innerHTML=cells.map(([label,val])=>
+      `<div class="stat-cell"><div class="stat-top"><div class="stat-label">${esc(label)}</div></div><div class="stat-num">${esc(val)}</div></div>`).join('');
+    const acts=(data.actions||[]).map(a=>{
+      const color=a.level==='ok'?'var(--mint)':a.level==='warn'?'var(--amber)':'var(--amber)';
+      return `<div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--hairline-soft)">
+        <span class="tier-b ${a.level==='ok'?'max':'pro'}" style="flex:none">${esc(a.upstream)}</span>
+        <span style="font-size:13px;color:${color};line-height:1.7">${esc(a.action)}</span></div>`;
+    }).join('');
+    document.getElementById('actions').innerHTML=acts||'<span class="quota-empty">暂无建议</span>';
+  }catch(e){showToast('加载失败: '+e.message,'error');}
+}
+
+async function runProbe(){
+  const btn=document.getElementById('pkg-run');
+  const status=document.getElementById('pkg-status');
+  const ver=document.getElementById('pkg-version').value.trim();
+  const refresh=document.getElementById('pkg-refresh').checked;
+  btn.disabled=true; btn.textContent='分析中…';
+  status.textContent='正在拉取官方包并提取 glm/zcode.cjs（首次需下载数 MB，约 1-2 分钟）…';
+  try{
+    const qs=new URLSearchParams(); if(ver)qs.set('version',ver); if(refresh)qs.set('refresh','1');
+    const d=await api('GET','/upstream-package-analysis'+(qs.toString()?'?'+qs.toString():''));
+    if(d.ok===false){status.textContent='分析失败：'+(d.error||'未知错误');return;}
+    const p=d.data||{};
+    status.textContent=`完成（耗时 ${p.elapsed_s}s，${p.downloaded_now?'本次下载':'缓存命中'}）`;
+    const rows=(p.sections||[]).map(f=>{
+      const verdict=f.found===false
+        ? '<span style="color:var(--red)">已变化，需人工移植</span>'
+        : f.found ? '<span style="color:var(--mint)">命中</span>'
+                  : '<span style="color:var(--ink-mute)">过短未比对</span>';
+      return `<tr><td style="padding:6px 10px;border-bottom:1px solid var(--hairline-soft)" class="mono">stableSections[${f.index}]</td>`+
+        `<td style="padding:6px 10px;border-bottom:1px solid var(--hairline-soft)">${f.lines} 行</td>`+
+        `<td style="padding:6px 10px;border-bottom:1px solid var(--hairline-soft)">${verdict}</td></tr>`;
+    }).join('');
+    document.getElementById('pkg-result').innerHTML=`
+      <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-size:13px">
+        <span>包内 APP_VERSION：<b class="mono">${esc(p.app_version_in_package||'未找到')}</b></span>
+        <span>本地正文锁：<b class="mono">${esc(p.local_prompt_aligned)}</b></span>
+        <span>分析成员：${esc(p.member)}</span></div>
+      <div class="acct-scroll"><table style="width:100%;border-collapse:collapse;font-size:12px">${rows}</table></div>
+      <div class="hint" style="margin-top:10px">${esc(p.recommendation||'')}</div>`;
+  }catch(e){status.textContent='分析失败: '+e.message;}
+  finally{btn.disabled=false;btn.textContent='分析官方包';}
+}
+</script>
+</body>
+</html>

@@ -25,7 +25,7 @@ HUB.register({
       {k:'WB API Keys', v:keys, n:holds.cn?('风控冻结 cn '+holds.cn+'s'):'无风控冻结'},
       {k:'ZCODE · 正常/冷却', v:zcOk, vsmall:'/ '+zcRows.length, n:zcCool?('冷却 '+zcCool+' 个（自动恢复）'):'无冷却'},
       {k:'ZCODE · 剩余额度', v:U.num(zcQuota), vsmall:'tokens', n:zcRows.length+' 个账号合计'},
-      {k:'统一入口', v:'127.0.0.1:3001', n:'对话 /wb/v1（wb）· /v1（zcode）'},
+      {k:'统一入口', v:location.host, n:'对话 /wb/v1（wb）· /v1（zcode）'},
     ])}
     <div class="toolbar">
       <span class="pill ${holds.cn?'warn':'ok'}">${holds.cn?('WB 文本派发冻结中 '+holds.cn+'s（防连坐）'):'WB 派发正常'}</span>

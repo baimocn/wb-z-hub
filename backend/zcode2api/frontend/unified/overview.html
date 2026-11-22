@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-zcode-design>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>统一网关 · 概览</title>
+  <link href="/admin/css/app.css" rel="stylesheet">
+  <style>
+    :root{
+      --u-bg:#101114; --u-panel:#181a1f; --u-panel2:#1e2127; --u-line:#2a2d35;
+      --u-ink:#e8e6e0; --u-dim:#a9adb8; --u-mute:#7c8090;
+      --u-amber:#e8a33d; --u-mint:#5ec97a; --u-red:#e05656; --u-purple:#b78ae0; --u-blue:#6da8e8;
+      --u-mono:"Cascadia Code",Consolas,ui-monospace,monospace;
+    }
+    body{background:var(--u-bg);color:var(--u-ink);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;margin:0}
+    .u-wrap{max-width:1440px;margin:0 auto;padding:20px 28px 40px}
+    .u-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 18px;border-bottom:1px solid var(--u-line);margin-bottom:18px}
+    .u-brand{font-family:var(--u-mono);font-weight:700;letter-spacing:.14em;font-size:15px}
+    .u-brand span{color:var(--u-amber)}
+    .u-nav{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+    .u-nav a{color:var(--u-mute);text-decoration:none;font-size:13px;padding:5px 11px;border-radius:999px}
+    .u-nav a:hover{color:var(--u-ink);background:var(--u-panel2)}
+    .u-nav a.cur{color:var(--u-amber);background:rgba(232,163,61,.12);font-weight:600}
+    .u-nav .grp{color:var(--u-mute);font-size:11px;padding:0 4px;letter-spacing:.06em}
+    .u-nav .dot{color:var(--u-mint);font-size:10px}
+    .u-nav .dot.wb{color:var(--u-amber)}
+    .u-h1{font-size:21px;font-weight:700;margin:6px 0 2px}
+    .u-sub{font-size:13px;color:var(--u-mute);margin-bottom:18px}
+    .u-sect{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px}
+    .u-sect h2{font-size:14px;font-weight:600;margin:0}
+    .u-sect .meta{font-size:12px;color:var(--u-mute)}
+    .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .dcard{background:var(--u-panel);border:1px solid var(--u-line);border-radius:12px;padding:18px}
+    .dcard h3{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:8px}
+    .dcard .dom{font-size:11px;font-weight:700;letter-spacing:.1em;padding:2px 8px;border-radius:999px}
+    .dom.wb{background:rgba(232,163,61,.16);color:var(--u-amber)}
+    .dom.zc{background:rgba(109,168,232,.16);color:var(--u-blue)}
+    .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px}
+    .metric{background:var(--u-panel2);border:1px solid var(--u-line);border-radius:9px;padding:10px 12px}
+    .metric b{display:block;font-family:var(--u-mono);font-size:20px;font-weight:600;margin-top:3px}
+    .metric small{color:var(--u-mute);font-size:10.5px}
+    .metric b.ok{color:var(--u-mint)} .metric b.warn{color:var(--u-amber)} .metric b.bad{color:var(--u-red)}
+    .enter{margin-top:12px}
+    .enter a{display:inline-block;font-size:12.5px;color:var(--u-amber);text-decoration:none;border:1px solid rgba(232,163,61,.4);border-radius:8px;padding:6px 12px;margin-right:8px}
+    .enter a:hover{background:rgba(232,163,61,.1)}
+    .feed{background:var(--u-panel);border:1px solid var(--u-line);border-radius:12px}
+    .feed-row{display:flex;gap:12px;align-items:flex-start;padding:11px 16px;border-bottom:1px solid var(--u-line)}
+    .feed-row:last-child{border-bottom:none}
+    .feed-row .lv{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:999px}
+    .lv.p1{background:rgba(224,86,86,.15);color:var(--u-red)}
+    .lv.p2{background:rgba(232,163,61,.15);color:var(--u-amber)}
+    .lv.p3{background:var(--u-panel2);color:var(--u-mute)}
+    .feed-row .fb{flex:1;font-size:13px;color:var(--u-dim)}
+    .feed-row .fb b{color:var(--u-ink)}
+    .feed-row .act{flex:none}
+    .feed-row .act a{color:var(--u-amber);font-size:12px;text-decoration:none}
+    .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+    .tile{background:var(--u-panel);border:1px solid var(--u-line);border-radius:10px;padding:12px 14px;color:var(--u-dim);text-decoration:none;font-size:13px}
+    .tile:hover{color:var(--u-ink);border-color:#3a3e48}
+    .tile small{display:block;color:var(--u-mute);font-size:11px;margin-top:3px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .chip{background:var(--u-panel2);border:1px solid var(--u-line);border-radius:999px;padding:5px 13px;font-size:12px;color:var(--u-dim)}
+    .chip b{font-family:var(--u-mono);color:var(--u-ink)}
+    .statusline{display:flex;gap:14px;flex-wrap:wrap;background:var(--u-panel);border:1px solid var(--u-line);border-radius:10px;padding:10px 16px;font-size:12px;color:var(--u-dim);align-items:center}
+    .statusline .ok{color:var(--u-mint)}
+    .statusline .bad{color:var(--u-red)}
+    @media(max-width:900px){.duo{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="u-wrap">
+  <div class="u-topbar">
+    <div class="u-brand">UNIFIED <span>·</span> GATEWAY</div>
+    <nav class="u-nav">
+      <a href="/unified/overview.html" class="cur">概览</a>
+      <span class="grp"><span class="dot wb">●</span> WORKBUDDY</span>
+      <a href="/wb-ui#overview" target="_blank">域总览</a>
+      <a href="/wb-ui#accounts" target="_blank">账号池</a>
+      <a href="/wb-ui#gateway" target="_blank">网关接入</a>
+      <a href="/wb-ui#usage" target="_blank">用量</a>
+      <a href="/wb-ui#automation" target="_blank">自动化</a>
+      <a href="/wb-ui#media" target="_blank">媒体生产</a>
+      <a href="/wb-ui#settings" target="_blank">设置</a>
+      <a href="/wb-ui#logs" target="_blank">日志</a>
+      <span class="grp"><span class="dot">●</span> ZCODE</span>
+      <a href="/admin/accounts.html">账号池</a>
+      <a href="/admin/upstream.html">版本运维</a>
+      <span class="grp">全局</span>
+      <a href="/admin/monitoring.html">请求日志</a>
+      <a href="/admin/settings.html">系统</a>
+    </nav>
+  </div>
+
+  <div class="u-h1">概览</div>
+  <div class="u-sub">双域健康对比 · 风控与供给告警 · 双域入口。wb 积分与 zc token 各挂各的域卡，不做总和。</div>
+
+  <div class="duo">
+    <div class="dcard">
+      <h3><span class="dom wb">WORKBUDDY</span>WorkBuddy 账号池</h3>
+      <div id="wb-metrics" class="metrics"><div class="metric"><small>加载中…</small></div></div>
+      <div class="enter">
+        <a href="/wb-ui#accounts" target="_blank">进入 wb 账号池</a>
+        <a href="/wb-ui#media" target="_blank">媒体生产</a>
+        <a href="/wb-ui#automation" target="_blank">自动化</a>
+      </div>
+    </div>
+    <div class="dcard">
+      <h3><span class="dom zc">ZCODE</span>ZCode 账号池</h3>
+      <div id="zc-metrics" class="metrics"><div class="metric"><small>加载中…</small></div></div>
+      <div class="enter">
+        <a href="/admin/accounts.html">进入 zc 账号池</a>
+        <a href="/admin/upstream.html">版本运维</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="u-sect"><h2>风控与供给告警</h2><span class="meta" id="feed-meta"></span></div>
+  <div class="feed" id="feed"><div class="feed-row"><span class="fb">加载中…</span></div></div>
+
+  <div class="u-sect"><h2>WorkBuddy 全功能入口</h2><span class="meta">概览一屏可达 wb 一切（9 模块 + 高频操作）</span></div>
+  <div class="chips" id="wb-quadrant"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+    <a class="tile" href="/wb-ui#accounts" target="_blank">OAuth 授权新号<small>账号池 · 授权登录</small></a>
+    <a class="tile" href="/wb-ui#accounts" target="_blank">扫描桌面客户端<small>账号池 · 导入</small></a>
+    <button class="tile" style="cursor:pointer;text-align:left" onclick="wbOp('/accounts/credits/fetch',{realm:'cn'},'全池积分刷新')"><b>一键积分刷新</b><small>全部 cn 账号 · 真实上游调用</small></button>
+    <a class="tile" href="/wb-ui#automation" target="_blank">签到与活跃打卡<small>自动化 · 计划与记录</small></a>
+    <a class="tile" href="/wb-ui#accounts" target="_blank">导入导出<small>账号池 · 工具栏</small></a>
+  </div>
+  <div class="tiles" id="wb-tiles"></div>
+
+  <div class="u-sect"><h2>ZCode 版本运维</h2><span class="meta">manifest 探测 · 提示词正文锁 · 行级指纹 diff</span></div>
+  <div class="duo">
+    <div class="dcard" id="zc-lock"></div>
+    <div class="dcard" id="zc-accounts"></div>
+  </div>
+  <div class="tiles" style="margin-top:12px" id="zc-tiles"></div>
+
+  <div class="u-sect"><h2>端点与探针</h2></div>
+  <div class="statusline" id="endpoints">加载中…</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=v=>{const n=Number(v);return isFinite(n)?n.toLocaleString('zh-CN',{maximumFractionDigits:0}):'—'};
+async function api(path,method='GET',body=null){
+  const r=await fetch('/admin/api'+path,{method,body:body?JSON.stringify(body):undefined,
+    headers:{'Content-Type':'application/json'},});
+  if(!r.ok)throw new Error(path+' HTTP '+r.status);
+  return r.json();
+}
+async function wbCall(path,method='GET',body=null){
+  const r=await fetch('/admin/api/wb-admin'+path+(path.includes('?')?'&':'?')+'realm=cn',
+    {method,body:body?JSON.stringify(body):undefined,headers:{'Content-Type':'application/json'}});
+  return r.json();
+}
+const P=n=>String(n).padStart(2,'0');
+async function loadAll(){
+  const errors=[];
+  window.__loadDone=false;
+  // 注意：wbCall helper 会强拼 realm=cn，intl 查询必须直连，否则双 realm 参数
+  // 导致 wb 端取 [0] 语义漂移、账号被重复计数。
+  const [wbCn,wbIntl,zc,align,probe] = await Promise.all([
+    wbCall('/accounts').catch(e=>({accounts:[],error:String(e)})),
+    fetch('/admin/api/wb-admin/accounts?realm=intl').then(r=>r.json()).catch(()=>({accounts:[]})),
+    api('/accounts').catch(()=>({accounts:[]})),
+    api('/upstream-analysis').then(d=>d.data).catch(()=>null),
+    api('/upstream-package-analysis').then(d=>d.data).catch(()=>null),
+  ]);
+  const wbAll=[...(wbCn.accounts||[]),...(wbIntl.accounts||[])];
+  const isOn=a=>String(a.enabled)==='True'||a.enabled===true;
+  const banned=wbAll.filter(a=>String(a.accountBanned)==='True');
+  const relog=wbAll.filter(a=>String(a.needRelogin)==='True');
+  const cooldown=wbAll.filter(a=>a.inCooldown===true||String(a.inCooldown)==='True');
+  const restricted=wbAll.filter(a=>Number(a.restrictedUntil||0)>Date.now()/1000);
+  const checkable=wbAll.filter(a=>String(a.canCheckin)==='True');
+  const wbRemain=wbAll.reduce((s,a)=>s+(Number((a.credits||{}).remain)||0),0);
+  const wbReady=wbCn.usable||0;
+  // zc
+  const zcAll=zc.accounts||[];
+  const zcActive=zcAll.filter(a=>a.status==='active');
+  const zcBad=zcAll.filter(a=>a.status&&a.status!=='active');
+  // zc 额度：quota 键是模型名（如 GLM-5.3-Flash），逐键求和 remaining
+  const zcTokens=zcAll.reduce((s,a)=>{const q=a.quota||{};let t=0;
+    for(const k in q)t+=Number(q[k].remaining)||0;return s+t;},0);
+  const latest=(align&&align.upstreams&&align.upstreams.zcode.latest)||'';
+  const aligned=(align&&align.upstreams&&align.upstreams.zcode.prompt_aligned)||'';
+
+  $('wb-metrics').innerHTML=[
+    ['账号总数',wbAll.length,''],['可用(文本池)',wbReady,'ok'],['积分余额',fmt(wbRemain),''],
+    ['封禁',banned.length,banned.length?'bad':''],['凭证失效',relog.length,relog.length?'warn':''],
+    ['冷却中',cooldown.length,cooldown.length?'warn':''],['连坐暂停',restricted.length,restricted.length?'bad':''],
+    ['可签到',checkable.length,checkable.length?'ok':''],
+  ].map(([l,v,c])=>`<div class="metric"><small>${l}</small><b class="${c}">${v}</b></div>`).join('');
+
+  $('zc-metrics').innerHTML=[
+    ['账号总数',zcAll.length,''],['正常',zcActive.length,'ok'],
+    ['异常/耗尽',zcBad.length,zcBad.length?'bad':''],
+    ['Token 额度',fmt(zcTokens),''],
+    ['正文锁',aligned,''],['官方最新',latest||'—',latest&&aligned&&latest!==aligned?'warn':''],
+  ].map(([l,v,c])=>`<div class="metric"><small>${l}</small><b class="${c}">${v}</b></div>`).join('');
+
+  // 四象限 chips
+  const quad={};
+  wbAll.forEach(a=>{const k=(a.realm||'?')+' × '+(a.poolScope||'?');quad[k]=(quad[k]||0)+1;});
+  $('wb-quadrant').innerHTML=Object.entries(quad).map(([k,n])=>
+    `<span class="chip">${esc(k)} <b>${n}</b></span>`).join('');
+
+  // wb 模块瓦片
+  const wbMods=[['域总览','#overview','四象限健康 + 告警明细'],['网关接入','#gateway','端点与密钥'],
+    ['账号池','#accounts','46 账号全功能表'],['用量','#usage','积分流水与消耗'],
+    ['自动化','#automation','签到/打卡/聊天计划'],['智能体','#agents','智能体管理'],
+    ['媒体生产','#media','生图/生视频队列'],['设置','#settings','模型清单与限流'],['日志','#logs','签到与活跃记录']];
+  $('wb-tiles').innerHTML=wbMods.map(([t,h,d])=>
+    `<a class="tile" href="http://127.0.0.1:8789/${h}" target="_blank">${t}<small>${d}</small></a>`).join('');
+  $('zc-tiles').innerHTML=[
+    ['zc 账号池','/admin/accounts.html','4 账号 · 启停/授权/测试'],
+    ['zc 版本运维','/admin/upstream.html','正文锁 + 行级指纹 diff'],
+    ['zc 请求日志','/admin/monitoring.html','请求流水与错误'],
+    ['zc 系统','/admin/settings.html','免密/间隔/版本核验'],
+  ].map(([t,h,d])=>`<a class="tile" href="${h}">${t}<small>${d}</small></a>`).join('');
+
+  // 告警 feed（P1 高 / P2 中 / P3 低）
+  const feed=[];
+  if(banned.length)feed.push({p:'P1',dom:'wb',t:`${banned.length} 个账号被封禁`,d:banned.slice(0,3).map(a=>a.nickname||a.uid.slice(0,8)).join('、')+(banned.length>3?' 等':''),act:'8789/#accounts'});
+  if(restricted.length)feed.push({p:'P1',dom:'wb',t:`${restricted.length} 个账号连坐暂停中`,d:'到期自动恢复；可在 wb 账号池查看恢复时间',act:'8789/#accounts'});
+  if(relog.length)feed.push({p:'P1',dom:'wb',t:`${relog.length} 个账号凭证失效`,d:'需重新授权登录（OAuth）',act:'8789/#accounts'});
+  if(zcBad.length)feed.push({p:'P2',dom:'zc',t:`${zcBad.length} 个 zc 账号状态异常`,d:zcBad.map(a=>`${a.name||a.id}:${a.status}`).join('、'),act:'/admin/accounts.html'});
+  if(latest&&aligned&&latest!==aligned)feed.push({p:'P2',dom:'zc',t:`官方已到 ${latest}，正文锁 ${aligned}`,d:'先移植提示词正文，再抬 PROMPT_ALIGNED_VERSION（顺序不能反）',act:'/admin/upstream.html'});
+  if(cooldown.length)feed.push({p:'P2',dom:'wb',t:`${cooldown.length} 个账号冷却中`,d:'退避窗口过后自动恢复',act:'8789/#accounts'});
+  if(checkable.length)feed.push({p:'P3',dom:'wb',t:`${checkable.length} 个账号今日可签到`,d:'wb 自动化 · 签到',act:'8789/#automation'});
+  const lvOrder={P1:0,P2:1,P3:2};
+  feed.sort((a,b)=>lvOrder[a.p]-lvOrder[b.p]);
+  $('feed').innerHTML=feed.length?feed.map(f=>
+    `<div class="feed-row"><span class="lv ${f.p}">${f.p}</span>
+      <span class="fb"><b>[${f.dom}]</b> ${esc(f.t)}<div style="font-size:12px;color:var(--u-mute);margin-top:2px">${esc(f.d)}</div></span>
+      <span class="act"><a href="${f.act}" ${f.act.startsWith('http')?'target="_blank"':''}>处置 →</a></span></div>`).join('')
+    :'<div class="feed-row"><span class="fb">当前没有待处理告警。</span></div>';
+  $('feed-meta').textContent=`${feed.length} 条 · 按 P1→P3 排序`;
+
+  // 端点状态
+  const zcMeta=await fetch('/meta').then(r=>r.json()).catch(()=>null);
+  const wbH=await fetch('/wb/health').then(r=>r.status).catch(()=>0);
+  const wbVer=(zcMeta&&null)||'';
+  $('endpoints').innerHTML=
+    `<span>ZCode 端点 <b class="ok">:3001/v1</b></span>
+     <span>WB 端点 <b class="${wbH===200?'ok':'bad'}">:8789/v1</b></span>
+     <span>wb 控制台 <a style="color:var(--u-amber)" href="http://127.0.0.1:8789/" target="_blank">8789/</a></span>
+     <span>包探针 ${probe?('最近分析 '+esc(probe.version)+' · '+esc(probe.elapsed_s)+'s（缓存）'):'未运行'}</span>
+     <span>统一版本 <b class="mono">v${esc((zcMeta&&zcMeta.version)||'')}</b></span>`;
+  window.__loadDone=true;
+}
+/* 自愈加载：iframe 首次就绪时 API 并发可能被浏览器延后（实测：首帧
+   停在「加载中」，手动重跑即好）。给任意 Promise 加 6s 超时，整体失败
+   或仍有「加载中」占位时自动重试，最多 3 次。 */
+function _withTimeout(p, ms){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);}
+let _loadTry=0;
+async function _boot(){
+  if(window.__loadDone)return;
+  try{await _withTimeout(loadAll(),12000);}catch(e){/* 超时后重试 */}
+  if(!window.__loadDone && _loadTry++<3){setTimeout(_boot,600);}
+}
+window.addEventListener('DOMContentLoaded',()=>setTimeout(_boot,50));
+setTimeout(_boot,50);
+
+</script>
+</body>
+</html>

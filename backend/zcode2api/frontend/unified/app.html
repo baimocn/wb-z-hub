@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Z·HUB · 统一网关</title>
+<style>
+:root{
+  --bg:#0f1115; --panel:#171a20; --panel2:#1d212a; --line:#262a33;
+  --ink:#e8e6e0; --dim:#9aa0ad; --mute:#6d7280;
+  --amber:#e8a33d; --blue:#6da8e8; --mint:#5ec97a; --red:#e86a5c;
+  --mono:"Cascadia Code",Consolas,ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;align-items:center;gap:4px;padding:0 14px;height:46px;background:var(--panel);border-bottom:1px solid var(--line);flex:none;overflow-x:auto;scrollbar-width:none}
+header::-webkit-scrollbar{display:none}
+.brand{font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.12em;margin-right:8px;white-space:nowrap}
+.brand em{color:var(--amber);font-style:normal}
+.nav{display:flex;gap:2px;align-items:center}
+.nav .grp{color:var(--mute);font-size:10px;letter-spacing:.08em;padding:0 6px;white-space:nowrap}
+.nav a{color:var(--dim);text-decoration:none;font-size:12.5px;padding:5px 10px;border-radius:8px;white-space:nowrap}
+.nav a:hover{color:var(--ink);background:var(--panel2)}
+.nav a.cur{color:var(--amber);background:rgba(232,163,61,.12);font-weight:600}
+.dot{font-size:8px;margin-right:3px}
+.dot.wb{color:var(--amber)} .dot.zc{color:var(--blue)}
+main{flex:1;overflow:auto;padding:18px 22px 40px}
+h1{font-size:17px;margin:0 0 4px;font-weight:600}
+.sub{color:var(--mute);font-size:12px;margin:0 0 16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card .k{color:var(--mute);font-size:11.5px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.card .v{font-size:20px;font-weight:600;font-family:var(--mono)}
+.card .v small{font-size:12px;color:var(--dim);font-weight:400}
+.card .n{color:var(--dim);font-size:11.5px;margin-top:6px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-family:var(--mono)}
+.pill.ok{background:rgba(94,201,122,.14);color:var(--mint)}
+.pill.warn{background:rgba(232,163,61,.14);color:var(--amber)}
+.pill.bad{background:rgba(232,106,92,.14);color:var(--red)}
+.pill.mute{background:var(--panel2);color:var(--dim)}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px}
+th{background:var(--panel2);color:var(--dim);text-align:left;padding:8px 10px;font-weight:500;font-size:11.5px;white-space:nowrap}
+td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+td.mono,.mono{font-family:var(--mono)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.btn{display:inline-block;border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--amber);color:var(--amber)}
+.btn.mini{padding:3px 9px;font-size:11px;border-radius:7px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.bar{background:var(--panel2);border-radius:6px;height:6px;width:110px;display:inline-block;vertical-align:middle;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--mint)}
+.bar>i.warn{background:var(--amber)} .bar>i.bad{background:var(--red)}
+select,input{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:5px 9px;border-radius:8px;font-size:12px}
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.toast{position:fixed;right:18px;bottom:18px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--amber);padding:10px 16px;border-radius:10px;font-size:12.5px;z-index:99;display:none;max-width:420px}
+.toast.show{display:block}
+.empty{color:var(--mute);padding:26px;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:12px}
+.load{color:var(--mute);font-size:12px;padding:6px 0}
+pre.raw{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:11.5px;font-family:var(--mono);white-space:pre-wrap;word-break:break-all;color:var(--dim);max-height:420px;overflow:auto}
+a.ext{color:var(--blue)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Z<em>·</em>HUB</div>
+  <nav class="nav" id="nav">
+    <a href="#/overview" data-r="overview">概览</a>
+    <span class="grp"><span class="dot wb">●</span>WORKBUDDY</span>
+    <a href="#/wb-accounts" data-r="wb-accounts">账号池</a>
+    <a href="#/wb-usage" data-r="wb-usage">用量</a>
+    <a href="#/wb-media" data-r="wb-media">媒体</a>
+    <a href="#/wb-gateway" data-r="wb-gateway">接入</a>
+    <a href="#/wb-logs" data-r="wb-logs">日志</a>
+    <span class="grp"><span class="dot zc">●</span>ZCODE</span>
+    <a href="#/zc-accounts" data-r="zc-accounts">账号池</a>
+    <a href="#/zc-monitor" data-r="zc-monitor">请求监控</a>
+    <a href="#/zc-upstream" data-r="zc-upstream">版本运维</a>
+    <span class="grp">全局</span>
+    <a href="#/settings" data-r="settings">设置</a>
+  </nav>
+</header>
+<main id="main"><div class="load">加载中…</div></main>
+<div class="toast" id="toast"></div>
+<script>
+/* ───────── 基础设施 ───────── */
+const $=s=>document.querySelector(s);
+const main=$('#main');
+let NAV=0;
+let pollTimer=null;
+function toast(msg,kind){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  t.style.borderLeftColor = kind==='bad'?'var(--red)':kind==='ok'?'var(--mint)':'var(--amber)';
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),3600);
+}
+async function jget(p){ const r=await fetch(p,{headers:{'Accept':'application/json'}}); if(!r.ok) throw new Error(p+' → '+r.status); return r.json(); }
+async function jpost(p,body){ const r=await fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})}); const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error((j.error&&j.error.message)||j.message||p+' → '+r.status); return j; }
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=n=>{ n=Number(n)||0; if(n>=1e8) return (n/1e8).toFixed(2)+' 亿'; if(n>=1e4) return (n/1e4).toFixed(1)+' 万'; return String(n); };
+const ts=t=>t?new Date(t*1000).toLocaleString('zh-CN',{hour12:false}):'—';
+function stopPoll(){ if(pollTimer){ clearInterval(pollTimer); pollTimer=null; } }
+function poll(fn,ms){ stopPoll(); pollTimer=setInterval(fn,ms); }
+function bar(pct){ const p=Math.max(0,Math.min(100,pct??0)); const cls=p>=90?'bad':p>=70?'warn':''; return `<span class="bar"><i class="${cls}" style="width:${p}%"></i></span> <span class="mono" style="font-size:11px">${Number(p).toFixed(1)}%</span>`; }
+function confirmBox(msg){ return window.confirm(msg); }
+
+/* ───────── 数据源 ───────── */
+const D={};
+async function loadWbAccounts(){ const j=await jget('/wb/accounts?realm=all'); D.wbAccounts=j.accounts||[]; D.wbUsable=j.usable; return D.wbAccounts; }
+async function loadWbSettings(){ try{ D.wbSettings=await jget('/wb/settings'); }catch(e){ D.wbSettings=null; } return D.wbSettings; }
+async function loadWbRealm(){ try{ D.wbRealm=await jget('/wb/realm'); }catch(e){ D.wbRealm=null; } return D.wbRealm; }
+async function loadZc(){ const j=await jget('/admin/api/accounts'); D.zcAccounts=j.accounts||[]; return D.zcAccounts; }
+
+/* ───────── 页面：概览 ───────── */
+async function pageOverview(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>概览</h1><p class="sub">双域健康一屏看完</p><div class="load">拉取中…</div>';
+  const [wa, zs, realm, set] = await Promise.all([loadWbAccounts(), loadZc(), loadWbRealm(), loadWbSettings()]);
+  const byRealm=r=>wa.filter(a=>a.realm===r);
+  const credits=rows=>rows.reduce((s,a)=>s+((a.credits||{}).remain||0),0);
+  const keys=(set&&set.api_keys||[]).filter(k=>k.enabled).length;
+  const holds=(set&&set.restriction_holds)||{};
+  const zcOk=zs.filter(a=>a.status==='active').length, zcCool=zs.filter(a=>a.status==='cooling').length;
+  const zcQuota=zs.reduce((s,a)=>{ const q=a.quota&&Object.values(a.quota)[0]; return s+(q?q.remaining:0); },0);
+  if(_g())return; main.innerHTML=`
+  <h1>概览</h1><p class="sub">双域健康一屏看完 · WB 默认出口 <b class="mono">${esc(realm?realm.current:'?')}</b></p>
+  <div class="grid">
+    <div class="card"><div class="k">WORKBUDDY · 国内版</div><div class="v">${credits(byRealm('cn')).toFixed(0)} <small>credits</small></div><div class="n">${byRealm('cn').filter(a=>a.enabled).length} 启用 / ${byRealm('cn').length} 总数</div></div>
+    <div class="card"><div class="k">WORKBUDDY · 国际版</div><div class="v">${credits(byRealm('intl')).toFixed(0)} <small>credits</small></div><div class="n">${byRealm('intl').filter(a=>a.enabled).length} 启用 / ${byRealm('intl').length} 总数</div></div>
+    <div class="card"><div class="k">WB API Keys</div><div class="v">${keys}</div><div class="n">${holds.cn?('风控冻结 cn '+holds.cn+'s'):'无风控冻结'}</div></div>
+    <div class="card"><div class="k">ZCODE · 正常 / 冷却</div><div class="v">${zcOk}<small> / ${zs.length}</small></div><div class="n">${zcCool?('冷却 '+zcCool+' 个（自动恢复）'):'无冷却'}</div></div>
+    <div class="card"><div class="k">ZCODE · 剩余额度</div><div class="v">${num(zcQuota)}<small> tokens</small></div><div class="n">${zs.length} 个账号合计</div></div>
+    <div class="card"><div class="k">统一入口</div><div class="v" style="font-size:13px;font-family:var(--mono)">127.0.0.1:3001</div><div class="n">对话 /wb/v1（wb） · /v1（zcode）</div></div>
+  </div>
+  <div class="toolbar"><span class="pill ${holds.cn?'warn':'ok'}">${holds.cn?('WB 文本派发冻结中 '+holds.cn+'s（防连坐）'):'WB 派发正常'}</span>
+  <span class="pill mute">wb 账号 ${wa.length} · zc 账号 ${zs.length}</span></div>`;
+}
+
+/* ───────── 页面：WB 账号池 ───────── */
+const wbFilter={realm:'all',state:'all'};
+async function pageWbAccounts(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>WB 账号池</h1><p class="sub">凭证 / 积分 / 出站池 · 操作实时生效</p><div class="load">拉取中…</div>';
+  await loadWbAccounts();
+  render();
+  function render(){
+    let rows=D.wbAccounts;
+    if(wbFilter.realm!=='all') rows=rows.filter(a=>a.realm===wbFilter.realm);
+    if(wbFilter.state==='ok') rows=rows.filter(a=>a.enabled&&!a.tokenExpired&&!a.accountBanned&&!a.needRelogin);
+    if(wbFilter.state==='bad') rows=rows.filter(a=>!a.enabled||a.tokenExpired||a.accountBanned||a.needRelogin);
+    const state=r=>{
+      if(r.accountBanned) return '<span class="pill bad">封禁</span>';
+      if(r.needRelogin||r.tokenExpired) return '<span class="pill bad">需重登</span>';
+      if(!r.enabled) return '<span class="pill mute">停用</span>';
+      if(r.inCooldown) return '<span class="pill warn">冷却</span>';
+      return '<span class="pill ok">正常</span>';
+    };
+    if(_g())return; main.innerHTML=`
+    <h1>WB 账号池</h1><p class="sub">${D.wbUsable!=null?('可用 '+D.wbUsable+' · '):''}共 ${D.wbAccounts.length} 个账号 · 操作实时生效</p>
+    <div class="toolbar">
+      域 <select id="fRealm"><option value="all">全部</option><option value="cn">国内</option><option value="intl">国际</option></select>
+      状态 <select id="fState"><option value="all">全部</option><option value="ok">正常</option><option value="bad">异常/停用</option></select>
+      <button class="btn mini" id="btnRefreshAll">刷新全部凭证</button>
+      <span class="pill mute">media 池 ${D.wbAccounts.filter(a=>a.poolScope==='media').length} · text 池 ${D.wbAccounts.filter(a=>a.poolScope!=='media').length}</span>
+    </div>
+    <table><thead><tr><th>账号</th><th>域</th><th>池</th><th>状态</th><th>积分</th><th>凭证有效期</th><th>最近错误</th><th>操作</th></tr></thead><tbody>
+    ${rows.map(r=>`
+      <tr data-uid="${esc(r.uid)}">
+        <td><b>${esc(r.nickname||r.uid.slice(0,8))}</b><br><span class="mono" style="color:var(--mute);font-size:10.5px">${esc(r.uid.slice(0,8))}</span></td>
+        <td>${esc(r.realm)}</td><td>${esc(r.poolScope||'')}</td><td>${state(r)}</td>
+        <td class="mono">${(((r.credits||{}).remain)??0).toFixed(0)}<br><span style="font-size:10px;color:var(--mute)">${(r.credits||{}).used_percent||''}</span></td>
+        <td>${esc(r.expiresIn||'—')}${r.lastCheckin?'<br><span style="font-size:10px;color:var(--mute)">签到 '+esc(r.lastCheckin)+'</span>':''}</td>
+        <td style="max-width:180px;color:var(--dim);font-size:11px">${esc((r.lastError||'').slice(0,60))||'—'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn mini" data-act="refresh">刷新凭证</button>
+          <button class="btn mini" data-act="toggle">${r.enabled?'停用':'启用'}</button>
+        </td>
+      </tr>`).join('') || '<tr><td colspan="8"><div class="empty">无匹配账号</div></td></tr>'}
+    </tbody></table>`;
+    $('#fRealm').value=wbFilter.realm; $('#fState').value=wbFilter.state;
+    $('#fRealm').onchange=e=>{wbFilter.realm=e.target.value;render();};
+    $('#fState').onchange=e=>{wbFilter.state=e.target.value;render();};
+    $('#btnRefreshAll').onclick=async()=>{
+      const uids=rows.map(r=>r.uid);
+      if(!uids.length||!confirmBox('刷新全部匹配账号的凭证？')) return;
+      toast('刷新中…'); try{ const r=await jpost('/wb/accounts/refresh',{uids}); const res=r.results||[];
+        toast(`刷新完成 ${res.filter(x=>x.ok).length}/${res.length}`, res.every(x=>x.ok)?'ok':'warn'); loadWbAccounts().then(()=>render()); }catch(e){ toast('刷新失败: '+e.message,'bad'); }
+    };
+    main.querySelectorAll('tr[data-uid]').forEach(tr=>{
+      const uid=tr.dataset.uid;
+      tr.querySelector('[data-act=refresh]').onclick=async()=>{
+        toast('刷新中…'); try{ const r=await jpost('/wb/accounts/refresh',{uids:[uid]}); const x=(r.results||[])[0]||{};
+          toast(x.ok?'凭证已刷新':'刷新失败: '+(x.error||'?'), x.ok?'ok':'bad'); loadWbAccounts().then(()=>render());
+        }catch(e){ toast('刷新失败: '+e.message,'bad'); } };
+      tr.querySelector('[data-act=toggle]').onclick=async()=>{
+        const acc=rows.find(r=>r.uid===uid); const en=!(acc&&acc.enabled);
+        if(!confirmBox((en?'启用':'停用')+'该账号？')) return;
+        try{ await jpost('/wb/accounts/set-all',{enabled:en,uids:[uid]}); toast('已'+(en?'启用':'停用'),'ok'); loadWbAccounts().then(()=>render()); }
+        catch(e){ toast('失败: '+e.message,'bad'); } };
+    });
+  }
+}
+
+/* ───────── 页面：WB 用量 ───────── */
+async function pageWbUsage(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>WB 用量</h1><p class="sub">本机反代累计 · 每 5 秒自动刷新</p><div class="load">拉取中…</div>';
+  const render=async()=>{
+    const u=await jget('/wb/usage'); let rem=null; try{ rem=await jget('/wb/usage/remaining'); }catch(e){}
+    const cells=[
+      ['请求数',num(u.requests),`错误 ${u.errors||0}`],
+      ['Prompt tokens',num(u.prompt_tokens),''],
+      ['Completion tokens',num(u.completion_tokens),(u.reasoning_tokens?('推理 '+num(u.reasoning_tokens)):'')],
+      ['总 tokens',num(u.total_tokens||((u.prompt_tokens||0)+(u.completion_tokens||0))),''],
+    ];
+    if(_g())return; main.innerHTML=`<h1>WB 用量</h1><p class="sub">本机反代累计 · 每 5 秒自动刷新</p>
+    <div class="grid">${cells.map(c=>`<div class="card"><div class="k">${c[0]}</div><div class="v">${c[1]}</div><div class="n">${c[2]}</div></div>`).join('')}</div>
+    ${rem?`<h1 style="font-size:14px">剩余额度（按 realm）</h1><pre class="raw">${esc(JSON.stringify(rem,null,2).slice(0,3000))}</pre>`:''}`;
+  };
+  await render(); poll(render,5000);
+}
+
+/* ───────── 页面：WB 媒体 ───────── */
+async function pageWbMedia(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>WB 媒体</h1><p class="sub">生图 / 生视频模型与最近任务</p><div class="load">拉取中…</div>';
+  const render=async()=>{
+    const m=await jget('/wb/v1/media/models'); const t=await jget('/wb/v1/media/tasks?limit=20');
+    const models=(m.models||[]);
+    if(_g())return; main.innerHTML=`<h1>WB 媒体</h1><p class="sub">realm=${esc(m.realm)} · 模型 ${models.length} 个</p>
+    <table><thead><tr><th>模型</th><th>能力</th><th>计费</th><th>约束</th></tr></thead><tbody>
+    ${models.map(x=>`<tr><td class="mono">${esc(x.id)}</td><td>${(x.tags||[]).map(t=>`<span class="pill mute">${esc(t)}</span>`).join(' ')}</td>
+      <td class="mono">${x.creditPerImage!=null?x.creditPerImage+' /张':''}${x.creditPerSecond!=null?x.creditPerSecond+' /秒':''}</td>
+      <td style="color:var(--dim);font-size:11px">${x.videoGeneration?`${(x.videoGeneration.resolutions||[]).join('/')} · ${x.videoGeneration.minSeconds}-${x.videoGeneration.maxSeconds}s · ${(x.videoGeneration.aspectRatios||[]).join('/')}`:'—'}</td></tr>`).join('')}
+    </tbody></table>
+    <h1 style="font-size:14px;margin-top:20px">最近任务</h1>
+    <table><thead><tr><th>任务</th><th>模型</th><th>状态</th><th>积分</th><th>时间</th><th>产物</th></tr></thead><tbody>
+    ${(t.tasks||[]).map(x=>`<tr><td class="mono">${esc(x.id)}</td><td>${esc(x.model)}</td>
+      <td>${x.status==='completed'?'<span class="pill ok">完成</span>':`<span class="pill warn">${esc(x.status||'—')}</span>`}</td>
+      <td class="mono">${x.credit!=null?x.credit:'—'}</td><td>${ts(x.created_at)}</td>
+      <td>${x.url?`<a class="ext" href="${esc(x.url)}" target="_blank">下载</a>`:'—'}</td></tr>`).join('') || '<tr><td colspan="6"><div class="empty">暂无任务</div></td></tr>'}
+    </tbody></table>`;
+  };
+  await render(); poll(render,8000);
+}
+
+/* ───────── 页面：WB 接入 ───────── */
+async function pageWbGateway(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>WB 接入</h1><p class="sub">模型目录 / 出口 / Key</p><div class="load">拉取中…</div>';
+  const [mm, set] = await Promise.all([jget('/wb/v1/models'), loadWbSettings()]);
+  const models=mm.data||[];
+  if(_g())return; main.innerHTML=`<h1>WB 接入</h1><p class="sub">客户端指向 <b class="mono">http://127.0.0.1:3001/wb/v1</b> · 模型 ${models.length} 个</p>
+  <div class="grid">
+    <div class="card"><div class="k">OpenAI 兼容端点</div><div class="v" style="font-size:12px;font-family:var(--mono)">/wb/v1/chat/completions</div><div class="n">/wb/v1/images/generations · /wb/v1/videos</div></div>
+    <div class="card"><div class="k">默认出口</div><div class="v">${esc(D.wbRealm?D.wbRealm.current:'—')}</div><div class="n">设置页可切换</div></div>
+    <div class="card"><div class="k">API Keys</div><div class="v">${(set&&set.api_keys||[]).filter(k=>k.enabled).length}</div><div class="n">${(set&&set.api_keys||[]).map(k=>esc(k.name)+'['+esc(k.realm||'跟随')+' '+esc(k.masked||'')+']').join(' · ')||'—'}</div></div>
+  </div>
+  <table><thead><tr><th>模型 ID</th><th>名称</th><th>能力</th></tr></thead><tbody>
+  ${models.map(x=>`<tr><td class="mono">${esc(x.id)}</td><td>${esc(x.name||'')}</td><td style="color:var(--dim);font-size:11px">${x.capabilities?Object.entries(x.capabilities).filter(e=>e[1]).map(e=>e[0]).join(' · '):'—'}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+/* ───────── 页面：WB 日志 ───────── */
+let logFilter='all';
+async function pageWbLogs(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>WB 日志</h1><p class="sub">网关运行日志 · 每 5 秒自动刷新</p><div class="load">拉取中…</div>';
+  const render=async()=>{
+    const j=await jget('/wb/logs?limit=300'); const rows=j.logs||[];
+    const f=rows.filter(r=>logFilter==='all'||(r.level||'').toLowerCase()===logFilter);
+    if(_g())return; main.innerHTML=`<h1>WB 日志</h1><p class="sub">网关运行日志 · 每 5 秒自动刷新 · ${rows.length} 行</p>
+    <div class="toolbar">级别 <select id="fLog"><option value="all">全部</option><option value="info">INFO</option><option value="warn">WARN</option><option value="error">ERROR</option></select></div>
+    <pre class="raw">${esc(f.slice().reverse().map(r=>`${(r.ts||r.time||'')} [${String(r.level||'?').toUpperCase()}] ${r.msg||r.message||JSON.stringify(r)}`).join('\n').slice(-20000))||'（空）'}</pre>`;
+    $('#fLog').value=logFilter; $('#fLog').onchange=e=>{logFilter=e.target.value;render();};
+  };
+  await render(); poll(render,5000);
+}
+
+/* ───────── 页面：ZC 账号池 ───────── */
+async function pageZcAccounts(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>ZC 账号池</h1><p class="sub">JWT 凭证 / 套餐额度 · 状态实时</p><div class="load">拉取中…</div>';
+  const render=async()=>{
+    const rows=await loadZc(); const now=Date.now()/1000;
+    if(_g())return; main.innerHTML=`<h1>ZC 账号池</h1><p class="sub">${rows.length} 个 JWT 账号 · 状态实时</p>
+    <table><thead><tr><th>账号</th><th>状态</th><th>额度（主力模型）</th><th>套餐</th><th>备注</th><th>操作</th></tr></thead><tbody>
+    ${rows.map(a=>{
+      const q=Object.entries(a.quota||{})[0]||[];
+      const usedPct=q[1]?( (q[1].used/(q[1].total||1))*100 ):0;
+      const cool=a.cooling_until?Math.max(0,a.cooling_until-now):0;
+      return `<tr><td><b>${esc(a.name)}</b> <span class="pill mute">${esc(a.provider)}/${esc(a.mode)}</span></td>
+      <td>${a.status==='active'?'<span class="pill ok">正常</span>':`<span class="pill warn">${esc(a.status||'—')}${cool?(' '+Math.ceil(cool/60)+'min'):''}</span>`}</td>
+      <td>${q[0]?`<span class="mono">${esc(q[0])}</span><br>${bar(usedPct)}<br><span class="mono" style="font-size:10.5px;color:var(--dim)">${num(q[1].remaining)} / ${num(q[1].total)}</span>`:'—'}</td>
+      <td style="color:var(--dim);font-size:11px">${esc((a.plan&&a.plan.name)||'—')}<br>${a.plan&&a.plan.ends_at?('至 '+ts(a.plan.ends_at)):''}</td>
+      <td style="max-width:200px;color:var(--dim);font-size:11px">${esc(a.last_error||'')}</td>
+      <td><button class="btn mini" data-id="${esc(a.id)}" data-en="${a.enabled?'1':'0'}">${a.enabled?'停用':'启用'}</button></td></tr>`;
+    }).join('')}
+    </tbody></table>`;
+    main.querySelectorAll('button[data-id]').forEach(b=>{
+      b.onclick=async()=>{
+        const en=b.dataset.en==='1';
+        if(!confirmBox((en?'停用':'启用')+'该 ZC 账号？')) return;
+        try{ await jpost('/admin/api/accounts/'+encodeURIComponent(b.dataset.id)+'/enabled',{enabled:!en}); toast('已'+(en?'停用':'启用'),'ok'); render(); }
+        catch(e){ toast('失败: '+e.message,'bad'); } };
+    });
+  };
+  await render();
+}
+
+/* ───────── 页面：ZC 监控 ───────── */
+let zcFilter='all';
+async function pageZcMonitor(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>ZC 请求监控</h1><p class="sub">最近请求 · 每 5 秒自动刷新</p><div class="load">拉取中…</div>';
+  const render=async()=>{
+    const j=await jget('/admin/api/monitoring?limit=120'); const rows=j.entries||[];
+    const f=rows.filter(r=>zcFilter==='all'||(zcFilter==='ok'?r.ok:!r.ok));
+    if(_g())return; main.innerHTML=`<h1>ZC 请求监控</h1><p class="sub">保留 ${j.keep||500} 条 · 当前 ${rows.length} 条 · 每 5 秒自动刷新</p>
+    <div class="toolbar">结果 <select id="fZc"><option value="all">全部</option><option value="ok">成功</option><option value="err">失败</option></select></div>
+    <table><thead><tr><th>时间</th><th>结果</th><th>模型</th><th>账号</th><th>耗时</th><th>tokens</th><th>预览 / 错误</th></tr></thead><tbody>
+    ${f.map(r=>`<tr><td class="mono">${ts(r.ts).slice(11)}</td>
+      <td>${r.ok?'<span class="pill ok">200</span>':`<span class="pill bad">${r.status||'—'}</span>`}</td>
+      <td>${esc(r.model||'')}</td><td>${esc(r.account||'—')}</td>
+      <td class="mono">${r.t_total?(r.t_total.toFixed(1)+'s'):'—'}</td>
+      <td class="mono">${r.input_tokens!=null?(num(r.input_tokens)+'/'+num(r.output_tokens||0)):'—'}</td>
+      <td style="max-width:280px;color:var(--dim);font-size:11px;word-break:break-all">${esc(r.ok?String(r.preview||'').slice(0,60):String(r.error||'').slice(0,90))}</td></tr>`).join('') || '<tr><td colspan="7"><div class="empty">暂无请求</div></td></tr>'}
+    </tbody></table>`;
+    $('#fZc').value=zcFilter; $('#fZc').onchange=e=>{zcFilter=e.target.value;render();};
+  };
+  await render(); poll(render,5000);
+}
+
+/* ───────── 页面：ZC 版本运维 ───────── */
+async function pageZcUpstream(_s){
+  const _g=()=>_s!==NAV;
+  if(_g())return; main.innerHTML='<h1>ZC 版本运维</h1><p class="sub">上游版本 / 提示词锁 / 自动动作</p><div class="load">分析中…</div>';
+  const j=await jget('/admin/api/upstream-analysis'); const d=j.data||{};
+  const z=(d.upstreams&&d.upstreams.zcode)||{}; const w=(d.upstreams&&d.upstreams.workbuddy)||{};
+  const probed=w.probed||{};
+  if(_g())return; main.innerHTML=`<h1>ZC 版本运维</h1><p class="sub">生成于 ${ts(d.generated_at)}</p>
+  <div class="grid">
+    <div class="card"><div class="k">ZCode 上游最新</div><div class="v">${esc(z.latest||'—')}</div><div class="n">网关 ${esc(z.gateway||'—')} · 客户端 ${esc(z.client||'—')}</div></div>
+    <div class="card"><div class="k">提示词锁</div><div class="v">${esc(z.prompt_aligned||'—')}</div><div class="n">${z.prompt_aligned===z.latest?'正文与官方对齐':'正文与官方不一致'}</div></div>
+    <div class="card"><div class="k">WB 版本探测</div><div class="v" style="font-size:13px;font-family:var(--mono)">${esc(Object.entries(probed).map(e=>e[0]+' '+e[1]).join(' · ')||'—')}</div><div class="n">versionfeed 自动跟版</div></div>
+  </div>
+  ${(d.actions||[]).map(a=>`<div class="card" style="margin-bottom:10px"><span class="pill ${a.level==='ok'?'ok':(a.level==='warn'?'warn':'bad')}">${esc(a.level)}</span> ${esc(a.action)}</div>`).join('')}`;
+}
+
+/* ───────── 页面：设置 ───────── */
+async function pageSettings(_s){
+  const _g=()=>_s!==NAV;
+  const set=await loadWbSettings(); const k=(set&&set.api_keys)||[];
+  const holds=(set&&set.restriction_holds)||{};
+  if(_g())return; main.innerHTML=`<h1>设置</h1><p class="sub">常用项只读呈现 · 深度编辑走高级面板（新窗口）</p>
+  <div class="grid">
+    <div class="card"><div class="k">WB 默认出口</div><div class="v">${esc(D.wbRealm?D.wbRealm.current:'—')}</div><div class="n"><button class="btn mini" id="btnRealm">切换到另一出口</button></div></div>
+    <div class="card"><div class="k">WB 风控冻结</div><div class="v">${holds.cn?(holds.cn+'s'):'无'}</div><div class="n">3012 连坐自动恢复</div></div>
+    <div class="card"><div class="k">媒体限制</div><div class="v" style="font-size:13px;font-family:var(--mono)">图 ${(set&&set.media)?set.media.image_max_per_minute:'—'}/分</div><div class="n">视频 ≤ ${(set&&set.media)?set.media.video_max_seconds:'—'}s · 并发 ${(set&&set.media)?set.media.video_concurrency:'—'}</div></div>
+    <div class="card"><div class="k">高级面板</div><div class="v" style="font-size:13px">wb-ui · admin</div><div class="n"><a class="ext" href="/wb-ui?tab=settings" target="_blank">WB 设置（新窗口）</a> · <a class="ext" href="/admin/settings.html" target="_blank">ZC 设置（新窗口）</a></div></div>
+  </div>
+  <h1 style="font-size:14px">WB API Keys</h1>
+  <table><thead><tr><th>名称</th><th>出口</th><th>Key</th><th>状态</th></tr></thead><tbody>
+  ${k.map(x=>`<tr><td>${esc(x.name||'未命名')}</td><td>${esc(x.realm||'跟随默认')}</td><td class="mono">${esc(x.masked||'')}</td><td>${x.enabled?'<span class="pill ok">启用</span>':'<span class="pill mute">停用</span>'}</td></tr>`).join('')}
+  </tbody></table>`;
+  $('#btnRealm').onclick=async()=>{
+    const cur=D.wbRealm?D.wbRealm.current:null; const to=cur==='cn'?'intl':'cn';
+    if(!confirmBox('默认出口切换为 '+to+'？')) return;
+    try{ await jpost('/wb/realm',{realm:to}); D.wbRealm=null; toast('已切换到 '+to,'ok'); loadWbRealm().then(pageSettings); }
+    catch(e){ toast('切换失败: '+e.message,'bad'); }
+  };
+}
+
+/* ───────── 路由 ───────── */
+const ROUTES={
+  'overview':pageOverview,
+  'wb-accounts':pageWbAccounts,
+  'wb-usage':pageWbUsage,
+  'wb-media':pageWbMedia,
+  'wb-gateway':pageWbGateway,
+  'wb-logs':pageWbLogs,
+  'zc-accounts':pageZcAccounts,
+  'zc-monitor':pageZcMonitor,
+  'zc-upstream':pageZcUpstream,
+  'settings':pageSettings,
+};
+async function route(){
+  stopPoll();
+  const _s=++NAV;
+  const r=(location.hash||'#/overview').replace(/^#\//,'');
+  const fn=ROUTES[r]||pageOverview;
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('cur',a.dataset.r===r));
+  try{ await fn(_s); }
+  catch(e){ main.innerHTML='<h1>加载失败</h1><pre class="raw">'+esc(String((e&&e.message)||e))+'</pre><p class="sub"><a class="ext" href="javascript:location.reload()">重试</a></p>'; }
+}
+window.addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>

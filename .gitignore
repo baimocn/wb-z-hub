@@ -1,0 +1,48 @@
+# 数据与凭证（绝不入库）
+data/
+accounts/
+usage/
+catalog/
+*.db
+*.sqlite
+*.db-shm
+*.db-wal
+.env
+.env.*
+_panel_token.txt
+device_mid
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# 日志与临时文件
+*.log
+*.out
+*.tmp
+server.log
+autostart.log
+zlocal.out
+zreq.json
+
+# IDE / 工具
+.mimosa/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# 原型与备份
+原型/
+backup/
+*.bak
+*nul
+wb-proxy-run.*
+media_rescue_log.json
+text_scan_*
