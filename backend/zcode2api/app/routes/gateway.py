@@ -701,7 +701,9 @@ async def _dispatch(req_id, body, incoming_headers, provider):
                 skip_ids=tried,
                 inflight=_inflight if limit > 0 else None,
                 pinned_id=pinned_id,
-                max_inflight=limit if limit > 0 else 2,
+                # 0 = 不设限（2026-11-22 用户口径）：传超大值让 select 的
+                # inflight<max_inflight 恒真；原实现 limit=0 会回退成 2。
+                max_inflight=limit if limit > 0 else 10 ** 9,
             )
             if account is None:
                 break  # 本 provider 池已无可选账号 → 下沉下一 provider

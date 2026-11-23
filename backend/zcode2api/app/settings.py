@@ -176,12 +176,11 @@ GATE_EDGE_HOLD_SECONDS = _int("ZCODE_GATE_EDGE_HOLD_SECONDS", 180)
 # 信号，换号解决不了，只会把整池一起送走。命中后冻结该出口一小段（默认 90s），
 # 让请求带着 Retry-After 快速失败，而不是继续轮询账号。
 RISK_HOLD_SECONDS = _int("ZCODE_RISK_HOLD_SECONDS", 90)
-# 忙碌断路器（busy-hold，Magpie BUSY_N/BUSY_WINDOW/BUSY_HOLD 同款，默认开）：
-# 3008 在短退避重试后**仍然** 3008（真饱和；一次重试就过去的瞬态争用不计）
-# 在 GATE_BUSY_WINDOW_SECONDS 窗口内累计 GATE_BUSY_THRESHOLD 次，全进程暂停
-# plan 渠道 GATE_BUSY_HOLD_SECONDS 秒——封禁前先降速（magpie 实证：重试吸收
-# ~90% 的 3008，上层无感不降速，3–7 分钟后地址被封 1–2 小时）
-GATE_BUSY_THRESHOLD = _int("ZCODE_GATE_BUSY_THRESHOLD", 5)
+# 忙碌断路器（busy-hold）：3008 重试耗尽后累计到阈值即全进程暂停。
+# 2026-11-22 用户口径「全放开、本地不设限」→ 默认关闭（0 = 不触发）。
+# 关闭后 3008 只做短退避重试，不会再把请求打成 429；风险是长时间饱和可能
+# 触发上游 IP 封禁（靠 edge_hold 兜底）。要恢复传 ZCODE_GATE_BUSY_THRESHOLD=5。
+GATE_BUSY_THRESHOLD = _int("ZCODE_GATE_BUSY_THRESHOLD", 0)
 GATE_BUSY_WINDOW_SECONDS = _int("ZCODE_GATE_BUSY_WINDOW_SECONDS", 60)
 GATE_BUSY_HOLD_SECONDS = _int("ZCODE_GATE_BUSY_HOLD_SECONDS", 180)
 # 套餐窗口闸门（pool-hold，2026-11-12）：全池账号都有「过期后实查确认枯竭」
@@ -199,11 +198,11 @@ GATE_POOL_HOLD_MAX_SECONDS = _int("ZCODE_GATE_POOL_HOLD_MAX", 3600)
 GATE_POOL_PROBE_MIN_SECONDS = _int("ZCODE_GATE_POOL_PROBE_MIN", 300)
 
 # 单账号并发上限（2026-11-22 用户指定改为 5；此前 3）。
-# 历史：上游 ZCode 单账号并发曾实测为 3（用户 2026-11-13 口径），本地 cap 高于
-# 上游只会常态化吃 3008 短退避；现按用户要求放开到 5，并支持
-# ZCODE_ACCOUNT_CONCURRENCY 环境变量覆盖（无需改代码）。若上游仍按 3 限并发，
-# 超出部分会走 3008 短退避重试，不会丢请求。
-ACCOUNT_CONCURRENCY = _int("ZCODE_ACCOUNT_CONCURRENCY", 5)
+# 单账号并发上限（2026-11-22 用户口径：全放开、本地不设限 → 0 = 无限）。
+# 历史：曾按上游实测写死 2/3/5；本地 cap 高于上游只会吃 3008 短退避，但不会
+# 丢请求。0 时 select 传超大 max_inflight（见 gateway._dispatch 调用点）。
+# 可用 ZCODE_ACCOUNT_CONCURRENCY 环境变量覆盖（>0 = 设上限）。
+ACCOUNT_CONCURRENCY = _int("ZCODE_ACCOUNT_CONCURRENCY", 0)
 # ── per-account 出口隔离（2.7.36，需求 = 每账号一个独立 IP 互相隔离）──────────
 # 依据：①上游按出口 IP 风控（magpie 实证：同 IP 同时用 3 个账号即触发边缘
 # 405 封地址，2 个不封——共享出口下 7 号远超红线）；②3008 风暴全池均匀爆发
