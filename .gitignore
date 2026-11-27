@@ -41,7 +41,7 @@ zreq.json
 # 原型与备份
 原型/
 backup/
-*.bak
+*.bak*
 *nul
 wb-proxy-run.*
 media_rescue_log.json
