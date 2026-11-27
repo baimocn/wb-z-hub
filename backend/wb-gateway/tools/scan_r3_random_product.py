@@ -8,7 +8,7 @@ import io, json, os, random, sys, time, urllib.request, urllib.error
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 BASE = "http://127.0.0.1:8789"
-KEY = "sk-wb-TIUGEbM2O9HF2dRl6POCfZRt9QBo9a08lBQSq5FenC8"
+KEY = os.environ.get("WB_GATEWAY_KEY", "")  # 本地网关 key 走环境变量，勿硬编码入库
 MODEL = "glm-5.3-flash"
 PROMPT = "请以《夏夜的巷子》为题写一篇300字左右的作文，要有具体场景和细节，不要空话套话。"
 CANON = ['hy4-preview-f', 'hy3', 'deepseek-v4.1-flash', 'glm-5.3', 'glm-5.3-flash',

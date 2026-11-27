@@ -14,7 +14,7 @@ import io, json, os, sys, time, urllib.request, urllib.error
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 BASE = "http://127.0.0.1:8789"
-KEY = "sk-wb-TIUGEbM2O9HF2dRl6POCfZRt9QBo9a08lBQSq5FenC8"
+KEY = os.environ.get("WB_GATEWAY_KEY", "")  # 本地网关 key 走环境变量，勿硬编码入库
 PROMPT = "请以《雨后的街道》为题写一篇200字左右的短文，要有具体场景和细节。"
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "text_scan_domestic.json")
 

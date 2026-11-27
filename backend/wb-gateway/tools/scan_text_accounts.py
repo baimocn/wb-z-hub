@@ -14,7 +14,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="repla
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 BASE = "http://127.0.0.1:8789"
-KEY = "sk-wb-TIUGEbM2O9HF2dRl6POCfZRt9QBo9a08lBQSq5FenC8"
+KEY = os.environ.get("WB_GATEWAY_KEY", "")  # 本地网关 key 走环境变量，勿硬编码入库
 TOKEN = open("_panel_token.txt", encoding="utf-8").read().strip()
 PROMPT = "请以《秋天的校园》为题写一篇300字左右的作文，要有具体场景和细节，不要空话套话。"
 MODEL = "glm-5.3-flash"
